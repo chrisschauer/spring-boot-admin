@@ -46,7 +46,12 @@ module.exports = function ($http, $q, jolokia) {
         });
     };
 
-    this.getLoggingConfigurator = function (app) {
+    /**
+     * Logback logging backend.
+     * @param app App.
+     * @returns Logback logging backend.
+     */
+    var logback = function(app) {
         return findLogbackMbean(app).then(function (logbackMbean) {
             return {
                 getLoglevels: function (loggers) {
@@ -92,5 +97,59 @@ module.exports = function ($http, $q, jolokia) {
                 }
             };
         });
+    };
+
+    /**
+     * Mock logging backend.
+     *
+     * @returns Mock logging backend.
+     */
+    var mock = function() {
+        var deferred = $q.defer();
+
+        var result = {
+            getLoglevels: function (loggers) {
+                var deferred = $q.defer();
+                deferred.resolve([
+                    {
+                        name: '1',
+                        level: 'TRACE'
+                    }, {
+                        name: '2',
+                        level: 'DEBUG'
+                    }, {
+                        name: '3',
+                        level: 'INFO'
+                    }, {
+                        name: '4',
+                        level: 'WARN'
+                    }, {
+                        name: '5',
+                        level: 'ERROR'
+                    }, {
+                        name: '6',
+                        level: 'OFF'
+                    }
+                ]);
+                return deferred.promise;
+            },
+            setLoglevel: function (logger, level) {
+                var deferred = $q.defer();
+                deferred.resolve();
+                return deferred.promise;
+            },
+            getAllLoggersNames: function () {
+                var deferred = $q.defer();
+                deferred.resolve(['1', '2', '3', '4', '5', '6']);
+                return deferred.promise;
+            }
+        };
+        deferred.resolve(result);
+        return deferred.promise;
+    };
+
+    this.getLoggingConfigurator = function (app) {
+        return logback(app);
+        // return mock();
     };
 };
