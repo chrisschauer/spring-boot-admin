@@ -99,6 +99,30 @@ module.exports = function ($http, $q, jolokia) {
         });
     };
 
+    var log4j2 = function(app) {
+        var deferred = $q.defer();
+
+        var result = {
+            getLoglevels: function (loggers) {
+                var deferred = $q.defer();
+                deferred.resolve([]);
+                return deferred.promise;
+            },
+            setLoglevel: function (logger, level) {
+                var deferred = $q.defer();
+                deferred.resolve();
+                return deferred.promise;
+            },
+            getAllLoggersNames: function () {
+                var deferred = $q.defer();
+                deferred.resolve([]);
+                return deferred.promise;
+            }
+        };
+        deferred.resolve(result);
+        return deferred.promise;
+    };
+
     /**
      * Mock logging backend.
      *
@@ -149,7 +173,8 @@ module.exports = function ($http, $q, jolokia) {
     };
 
     this.getLoggingConfigurator = function (app) {
-        return logback(app);
+        // return logback(app);
         // return mock();
+        return log4j2(app);
     };
 };
