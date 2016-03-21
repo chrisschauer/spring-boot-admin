@@ -49,7 +49,7 @@ module.exports = function ($http, $q, jolokia) {
     this.getLoggingConfigurator = function (app) {
         return findLogbackMbean(app).then(function (logbackMbean) {
             return {
-                getLoglevel: function (loggers) {
+                getLoglevels: function (loggers) {
                     var requests = [];
                     for (var j in loggers) {
                         requests.push({
@@ -66,8 +66,17 @@ module.exports = function ($http, $q, jolokia) {
                         level
                     ]);
                 },
-                getAllLoggers: function () {
-                    return jolokia.readAttr('api/applications/' + app.id + '/jolokia/', logbackMbean, 'LoggerList');
+                getAllLoggersNames: function () {
+                    return jolokia.readAttr('api/applications/' + app.id + '/jolokia/', logbackMbean, 'LoggerList')
+                        .then(function (response) {
+                            var loggers = [];
+                            for (var i in response.value) {
+                                loggers.push(response.value[i]);
+                            }
+                            var deferred = $q.defer();
+                            deferred.resolve(loggers);
+                            return deferred.promise;
+                        });
                 }
             };
         });

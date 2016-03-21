@@ -63,7 +63,7 @@ module.exports = function ($scope, application) {
                 return;
             }
 
-            logging.getLoglevel(toLoad)
+            logging.getLoglevels(toLoad)
                 .then(
                     function (responses) {
                         for (var j in responses) {
@@ -82,12 +82,12 @@ module.exports = function ($scope, application) {
                 });
         };
 
-        logging.getAllLoggers()
+        logging.getAllLoggersNames()
             .then(function (response) {
                 $scope.loggers = [];
-                for (var i in response.value) {
+                for (var i in response) {
                     $scope.loggers.push({
-                        name: response.value[i],
+                        name: response[i],
                         level: null
                     });
                 }
