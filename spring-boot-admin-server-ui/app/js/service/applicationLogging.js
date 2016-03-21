@@ -59,7 +59,19 @@ module.exports = function ($http, $q, jolokia) {
                             arguments: [loggers[j].name]
                         });
                     }
-                    return jolokia.bulkRequest('api/applications/' + app.id + '/jolokia/', requests);
+                    return jolokia.bulkRequest('api/applications/' + app.id + '/jolokia/', requests).then(function(responses) {
+                        var result = [];
+                        for (var j in responses) {
+                            result.push({
+                                name: responses[j].request.arguments[0],
+                                level: responses[j].value
+                            });
+                        }
+
+                        var deferred = $q.defer();
+                        deferred.resolve(result);
+                        return deferred.promise;
+                    });
                 },
                 setLoglevel: function (logger, level) {
                     return jolokia.exec('api/applications/' + app.id + '/jolokia/', logbackMbean, 'setLoggerLevel', [logger,

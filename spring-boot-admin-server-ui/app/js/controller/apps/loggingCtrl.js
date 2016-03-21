@@ -67,8 +67,8 @@ module.exports = function ($scope, application) {
                 .then(
                     function (responses) {
                         for (var j in responses) {
-                            var name = responses[j].request.arguments[0];
-                            var level = responses[j].value;
+                            var name = responses[j].name;
+                            var level = responses[j].level;
                             findLogger($scope.loggers, name)
                                 .level = level;
                         }
